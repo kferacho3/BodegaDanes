@@ -11,8 +11,8 @@ export default function Footer() {
         <Image
           src="/logos/BodegaDanesMainLogo.png"
           alt="Bodega Danes Main Logo"
-          width={50}
-          height={50}
+          width={150}
+          height={150}
         />
         <div className="flex gap-6 text-2xl">
           <Link
