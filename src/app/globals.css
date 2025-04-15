@@ -1,0 +1,68 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: 'BodegaChalk';
+  src: url('/fonts/Bodegachalk-Regular.ttf') format('truetype');
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'BodegaChalkSub';
+  src: url('/fonts/BodegachalkSub.ttf') format('truetype');
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
+/* Global theme colors */
+:root {
+  --foreground: #171717;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --foreground: #ededed;
+  }
+}
+
+/* Chalk board base styles */
+@layer base {
+  html, body {
+    font-family: 'BodegaChalkSub', sans-serif;
+    @apply bg-charcoal text-silver-light antialiased;
+  }
+
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.12;
+    mix-blend-mode: overlay;
+    z-index: 50;
+  }
+}
+
+
+@layer components {
+  .card-gradient {
+    @apply bg-radial-silver dark:bg-gradient-to-br dark:from-silver-dark/10 dark:to-charcoal-light;
+  }
+}
+
+@layer utilities {
+  .gradient-text {
+    @apply bg-clip-text text-transparent bg-radial-silver dark:bg-gradient-to-br dark:from-chalk-red-dark dark:to-chalk-red;
+  }
+  .gradient-text-pink {
+    @apply bg-clip-text text-transparent;
+    /* Using a chalk-pink texture background */
+    background-image: url('/textures/chalk-pink.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+  }
+}
