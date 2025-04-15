@@ -12,10 +12,6 @@ export type Availability = {
   services: { id: string; name: string; slots: number }[];
 };
 
-interface BookingFormProps {
-  availability: Availability[];
-}
-
 export type FormValues = {
   date: string;
   serviceId: string;
@@ -24,7 +20,11 @@ export type FormValues = {
   ua: boolean;
 };
 
-export default function BookingForm({ availability }: BookingFormProps) {
+interface BookingFormProps {
+  availability: Availability[];
+}
+
+function BookingForm({ availability }: BookingFormProps) {
   const methods = useForm<FormValues>({ mode: "onChange" });
   const { watch, setValue, handleSubmit, formState } = methods;
   const [step, setStep] = useState<number>(1);
@@ -206,4 +206,28 @@ export default function BookingForm({ availability }: BookingFormProps) {
       </div>
     </main>
   );
+}
+
+// This page component is the default export for Next.js.
+// It fetches (or defines) the availability data and renders the BookingForm.
+export default function Page() {
+  // For demonstration we use a hard-coded sample.
+  // Replace this with your data-fetching logic as needed.
+  const availability: Availability[] = [
+    {
+      date: "2025-04-16",
+      services: [
+        { id: "1", name: "Photography", slots: 5 },
+        { id: "2", name: "Videography", slots: 0 },
+      ],
+    },
+    {
+      date: "2025-04-17",
+      services: [
+        { id: "3", name: "Editing", slots: 3 },
+      ],
+    },
+  ];
+
+  return <BookingForm availability={availability} />;
 }
