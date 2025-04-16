@@ -12,10 +12,10 @@ export default function Home() {
   return (
     <>
       <HeroSection />
-      <SectionSeparator />
-
-      <AboutSection />
+   
       <ScrollingLogoBanner/>
+      <AboutSection />
+      <SectionSeparator />
       <MenuPreview />
       <SectionSeparator />
 

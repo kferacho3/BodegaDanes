@@ -2,9 +2,14 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { FaFacebookF, FaInstagram, FaTiktok, FaYoutube } from "react-icons/fa";
 
 export default function Footer() {
+  const pathname = usePathname();
+  // Hide the footer if the current pathname is "/menu"
+  if (pathname === "/menu") return null;
+
   return (
     <footer className="bg-charcoal text-center py-8 text-sm text-silver-dark">
       <div className="flex flex-col items-center gap-4">

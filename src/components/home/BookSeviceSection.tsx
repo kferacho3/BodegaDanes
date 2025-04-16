@@ -9,22 +9,40 @@ export default function BookServiceSection() {
       id="book"
       className="relative py-24 px-6 bg-gradient-to-br from-chalk-red-dark to-charcoal text-silver-light"
     >
-      <div className="mx-auto max-w-3xl text-center space-y-10">
+      {/* Wallpaper overlay container */}
+      <div className="absolute inset-0 z-0">
+        <Image
+          src="https://bodegadanes.s3.us-east-2.amazonaws.com/misc/wallpaper/BodegaDanesBookWallpaper.webp"
+          alt="Book Service Wallpaper"
+          layout="fill"
+          objectFit="cover"
+          priority
+        />
+      </div>
+
+      {/* Container with chalk-Menuboard texture */}
+      <div
+        className="relative z-10 mx-auto max-w-3xl text-center space-y-10 p-8 rounded-3xl"
+        style={{
+          background: `url("/textures/chalk-Menuboard.png")`,
+          backgroundRepeat: "repeat",
+          backgroundSize: "cover",
+        }}
+      >
         {/* Gold Chalk Icon */}
         <div className="flex justify-center">
-  <div className="w-48 h-40 rounded-full bg-[url('/textures/chalk-black.png')] bg-cover bg-center p-4 shadow-lg">
-    <div className="w-full h-full relative">
-      <Image
-        src="https://bodegadanes.s3.us-east-2.amazonaws.com/home/book/BodegaDanesBookNowPreview.webp"
-        alt="Book Now Preview"
-        fill
-        className="object-contain"
-        priority
-      />
-    </div>
-  </div>
-</div>
-
+          <div className="w-48 h-40 rounded-full bg-[url('/textures/chalk-red.png')] bg-cover bg-center p-4 shadow-lg">
+            <div className="w-full h-full relative">
+              <Image
+                src="https://bodegadanes.s3.us-east-2.amazonaws.com/home/book/BodegaDanesBookNowPreview.webp"
+                alt="Book Now Preview"
+                layout="fill"
+                className="object-contain"
+                priority
+              />
+            </div>
+          </div>
+        </div>
 
         {/* Title and Description */}
         <div className="space-y-4">
@@ -32,8 +50,7 @@ export default function BookServiceSection() {
             Ready to Book?
           </h2>
           <p className="text-lg leading-relaxed opacity-90">
-            Private events, pop‑ups, corporate lunches—pick a date, lock in your
-            spot, and let us handle the rest.
+            Private events, pop‑ups, corporate lunches—pick a date, lock in your spot, and let us handle the rest.
           </p>
         </div>
 

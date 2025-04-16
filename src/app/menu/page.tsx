@@ -1,4 +1,5 @@
 "use client";
+
 import { useFilter } from "@/context/FilterContext"; // adjust the path as needed
 import { menu } from "@/lib/menuData";
 import Head from "next/head";
@@ -72,19 +73,31 @@ export default function MenuPage() {
         />
       </Head>
 
-      {/* Outer container with wood-texture border (repeating) */}
-      <main className="min-h-screen flex flex-col items-center justify-center py-16 px-4 md:px-6 lg:px-8">
+      {/* Main container with the wallpaper background */}
+      <main className="min-h-screen flex flex-col items-center justify-center py-16 px-4 md:px-6 lg:px-8 relative">
+        {/* Blurred background wallpaper */}
         <div
-          className="relative w-full max-w-5xl rounded-xl overflow-hidden shadow-2xl"
+          className="absolute inset-0 z-0"
+          style={{
+            background: `url("https://bodegadanes.s3.us-east-2.amazonaws.com/misc/wallpaper/BodegaDanesMenuWallpaper.webp")`,
+            backgroundRepeat: "repeat",
+            backgroundSize: "cover",
+            filter: "blur(4px)",
+          }}
+        />
+
+        {/* Outer container with wood-texture border (repeating) */}
+        <div
+          className="relative z-10 w-full max-w-5xl rounded-xl overflow-hidden shadow-2xl"
           style={{
             borderWidth: "24px",
             borderStyle: "solid",
             borderImage: "url('/textures/wood-texture.png') 32",
-            backgroundRepeat: "repeat",
+            background: `linear-gradient(135deg, #1B1B18, #2A2A26)`,
           }}
         >
-          {/* Menu background using chalk-Menuboard texture (repeating, enhanced quality) */}
-          <div className="bg-[linear-gradient(135deg,_#1B1B18,_#2A2A26)] p-4 sm:p-6 md:p-8 space-y-4 text-silver-light">
+          {/* Content container (transparent background to let the wallpaper show through) */}
+          <div className="p-4 sm:p-6 md:p-8 space-y-4 text-silver-light">
             {/* Header Section */}
             <div className="text-center space-y-2">
               {/* Header Section Image – shows the header image for the selected filter */}
