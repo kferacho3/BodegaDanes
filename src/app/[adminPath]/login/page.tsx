@@ -1,35 +1,7 @@
-import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
+import { loginAction } from "./actions";
 
 export const dynamic = "force-static";
 
-/* ─────────── Server Action ─────────── */
-export async function loginAction(formData: FormData) {
-  "use server";
-
-  const ok =
-    formData.get("email")    === process.env.ADMIN_EMAIL &&
-    formData.get("password") === process.env.ADMIN_PASSWORD &&
-    formData.get("key")      === process.env.ADMIN_PASSKEY;
-
-  const adminPath = formData.get("adminPath") as string;
-
-  if (ok) {
-    // Await cookies() to get the RequestCookies instance
-    const cookieStore = await cookies();
-    cookieStore.set("bd_admin", "true", {
-      httpOnly : true,
-      secure   : process.env.NODE_ENV === "production",
-      sameSite : "lax",
-      path     : "/",
-    });
-    redirect(`/${adminPath}`);
-  }
-
-  redirect(`/${adminPath}/login?err=1`);
-}
-
-/* ─────────── Page (Server Component) ─────────── */
 interface Props {
   params: { adminPath: string };
   searchParams: { err?: string };
