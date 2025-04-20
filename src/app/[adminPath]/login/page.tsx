@@ -1,13 +1,15 @@
-import { loginAction } from "./actions";
+// src/app/[adminPath]/login/page.tsx
 
+import { loginAction } from "./actions";
 export const dynamic = "force-static";
 
-interface Props {
+export default function LoginPage({
+  params,
+  searchParams,
+}: {
   params: { adminPath: string };
   searchParams: { err?: string };
-}
-
-export default function LoginPage({ params, searchParams }: Props) {
+}) {
   const { adminPath } = params;
 
   return (
