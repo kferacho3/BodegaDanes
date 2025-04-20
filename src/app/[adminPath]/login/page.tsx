@@ -1,44 +1,50 @@
-"use client";
-
-import { useParams } from "next/navigation";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
 export const dynamic = "force-static";
 
-export default function LoginPage() {
-  const { adminPath } = useParams() as { adminPath: string };
+/* ─────────── Server Action ─────────── */
+export async function loginAction(formData: FormData) {
+  "use server";
 
-  async function login(formData: FormData) {
-    "use server";
+  const ok =
+    formData.get("email")    === process.env.ADMIN_EMAIL &&
+    formData.get("password") === process.env.ADMIN_PASSWORD &&
+    formData.get("key")      === process.env.ADMIN_PASSKEY;
 
-    // dynamically import so this stays server‑only
-    const { cookies }  = await import("next/headers");
-    const { redirect } = await import("next/navigation");
+  const adminPath = formData.get("adminPath") as string;
 
-    const ok =
-      formData.get("email")    === process.env.ADMIN_EMAIL &&
-      formData.get("password") === process.env.ADMIN_PASSWORD &&
-      formData.get("key")      === process.env.ADMIN_PASSKEY;
-
-    if (ok) {
-      // 🔑 await cookies() so we get RequestCookies with .set()
-      const cookieStore = await cookies();
-      cookieStore.set("bd_admin", "true", {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "lax",
-        path: "/",
-      });
-      redirect(`/${adminPath}`);
-    }
-
-    redirect(`/${adminPath}/login?err=1`);
+  if (ok) {
+    // Await cookies() to get the RequestCookies instance
+    const cookieStore = await cookies();
+    cookieStore.set("bd_admin", "true", {
+      httpOnly : true,
+      secure   : process.env.NODE_ENV === "production",
+      sameSite : "lax",
+      path     : "/",
+    });
+    redirect(`/${adminPath}`);
   }
+
+  redirect(`/${adminPath}/login?err=1`);
+}
+
+/* ─────────── Page (Server Component) ─────────── */
+interface Props {
+  params: { adminPath: string };
+  searchParams: { err?: string };
+}
+
+export default function LoginPage({ params, searchParams }: Props) {
+  const { adminPath } = params;
 
   return (
     <form
-      action={login}
+      action={loginAction}
       className="mx-auto mt-20 max-w-sm space-y-4 p-6 bg-charcoal/90 rounded-xl"
     >
+      <input type="hidden" name="adminPath" value={adminPath} />
+
       <h1 className="text-center text-2xl font-header text-silver-light">
         Provider&nbsp;Login
       </h1>
@@ -68,7 +74,7 @@ export default function LoginPage() {
         Sign&nbsp;in
       </button>
 
-      {typeof window !== "undefined" && window.location.search.includes("err") && (
+      {searchParams.err && (
         <p className="text-center text-red-500 text-sm">
           Invalid&nbsp;credentials
         </p>
