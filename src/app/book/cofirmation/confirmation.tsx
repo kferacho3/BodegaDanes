@@ -2,7 +2,7 @@ import Image from "next/image";
 import Stripe from "stripe";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: "2023-10-16" as unknown as Stripe.LatestApiVersion,
+  apiVersion: "2023-10-16" as Stripe.LatestApiVersion,
 });
 
 export default async function Confirmation({
@@ -14,7 +14,7 @@ export default async function Confirmation({
   if (!sessionId) return null;
 
   const session = await stripe.checkout.sessions.retrieve(sessionId);
-  const { date, serviceId, code } = session.metadata || {};
+  const meta = session.metadata || {};
 
   return (
     <main className="min-h-screen flex items-center justify-center bg-[url('/textures/chalk-black.png')] bg-repeat text-silver-light p-8">
@@ -27,11 +27,11 @@ export default async function Confirmation({
           className="mx-auto"
         />
         <h1 className="font-header text-3xl">Booking Confirmed!</h1>
-        <p className="text-lg font-bold">{serviceId}</p>
-        <p>{date}</p>
-        <p className="text-2xl font-mono">{code}</p>
+        <p className="text-lg font-bold">{meta.serviceId}</p>
+        <p>{meta.date} · {meta.time}</p>
+        <p className="text-2xl font-mono">{meta.code ?? "—"}</p>
         <p className="opacity-70">
-          An e‑mail receipt has been sent. We’ll reach out 48 h before your
+          A receipt has been e‑mailed to you. We’ll follow up 48 h before your
           event with final details.
         </p>
       </div>

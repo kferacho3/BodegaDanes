@@ -1,23 +1,11 @@
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
-import { FilterProvider } from "@/context/FilterContext"; // Import the FilterProvider
-import type { Metadata } from "next";
+import { FilterProvider } from "@/context/FilterContext";
 import { ThemeProvider } from "next-themes";
 import { Inter } from "next/font/google";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
-
-export const metadata: Metadata = {
-  title: "Bodega Dane’s – NYC Flavors in ATL",
-  description:
-    "Bringing iconic New York bodega classics like the Chopped Cheese to your doorstep.",
-  openGraph: {
-    type: "website",
-    title: "Bodega Dane’s – NYC Flavors in ATL",
-    images: ["/logo.png"],
-  },
-};
 
 export default function RootLayout({
   children,
@@ -25,10 +13,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en">
+      <head>
+        {/* Force correct CSS pixel width on Safari */}
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+      </head>
       <body className={inter.className}>
         <ThemeProvider attribute="class" defaultTheme="light">
-          {/* Wrap the part of the app that uses filter state in FilterProvider */}
           <FilterProvider>
             <Navbar />
             <main className="min-h-screen">{children}</main>

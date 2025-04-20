@@ -38,7 +38,7 @@ export default function ServicesPreview() {
   return (
     <section
       id="services"
-      className="py-16 px-4 md:px-0 bg-gradient-to-b from-charcoal to-charcoal/90 text-silver-light"
+      className="py-16 bg-gradient-to-b from-charcoal to-charcoal/90 text-silver-light"
     >
       <div className="mx-auto max-w-6xl">
         <h2 className="text-3xl md:text-4xl font-extrabold mb-10 text-center">
@@ -52,30 +52,29 @@ export default function ServicesPreview() {
               key={name}
               className="group relative overflow-hidden rounded-xl shadow-lg bg-charcoal border border-silver-dark/30"
             >
-              {/* image container with larger height */}
-              <div className="relative h-64 md:h-80 lg:h-96">
+              {/* image now width=100%, height auto */}
+              <div className="w-full overflow-hidden">
                 <Image
                   src={img}
                   alt={`${name} preview`}
-                  fill
+                  width={1920}
+                  height={1080}
                   sizes="(max-width:768px) 100vw,
                          (max-width:1280px) 50vw,
                          33vw"
-                  className="object-cover transition-transform duration-500 group-hover:scale-105"
+                  className="w-full h-auto object-cover transition-transform duration-500 group-hover:scale-105"
                   priority
                 />
-                {/* subtle overlay */}
                 <div className="absolute inset-0 bg-black/30 group-hover:bg-black/20 transition-colors" />
               </div>
 
-              {/* copy */}
               <div className="py-2 px-6 flex flex-col gap-2">
                 <h3 className="text-xl font-custom text-chalk-red">{name}</h3>
                 <p className="text-sm leading-relaxed">{description}</p>
 
                 <Link
                   href="#book"
-                  className="mt-auto inline-block self-start rounded-full bg-chalk-red px-5 py-2 text-sm font-semibold text-silver-light hover:bg-chalk-red/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-chalk-red/70"
+                  className="mt-auto self-start rounded-full bg-chalk-red px-5 py-2 text-sm font-semibold text-silver-light hover:bg-chalk-red/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-chalk-red/70"
                 >
                   {cta}
                 </Link>
