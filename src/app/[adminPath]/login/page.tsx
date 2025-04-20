@@ -1,16 +1,19 @@
 // src/app/[adminPath]/login/page.tsx
 
 import { loginAction } from "./actions";
+
 export const dynamic = "force-static";
 
-export default function LoginPage({
-  params,
-  searchParams,
-}: {
-  params: { adminPath: string };
-  searchParams: { err?: string };
-}) {
-  const { adminPath } = params;
+export default async function LoginPage(
+  {
+    params,
+    searchParams,
+  }: {
+    params: { adminPath: string };
+    searchParams: { err?: string };
+  }
+) {
+  const adminPath = params.adminPath;
 
   return (
     <form
