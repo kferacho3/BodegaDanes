@@ -9,17 +9,21 @@ export default async function LoginPage(
     params,
     searchParams,
   }: {
-    params: { adminPath: string };
-    searchParams: { err?: string };
+    // Next 15 now passes these as Promises
+    params: Promise<{ adminPath: string }>;
+    searchParams: Promise<{ err?: string }>;
   }
 ) {
-  const adminPath = params.adminPath;
+  // await them to get their actual values
+  const { adminPath } = await params;
+  const { err } = await searchParams;
 
   return (
     <form
       action={loginAction}
       className="mx-auto mt-20 max-w-sm space-y-4 p-6 bg-charcoal/90 rounded-xl"
     >
+      {/* include the slug for your server action */}
       <input type="hidden" name="adminPath" value={adminPath} />
 
       <h1 className="text-center text-2xl font-header text-silver-light">
@@ -51,7 +55,7 @@ export default async function LoginPage(
         Sign&nbsp;in
       </button>
 
-      {searchParams.err && (
+      {err && (
         <p className="text-center text-red-500 text-sm">
           Invalid&nbsp;credentials
         </p>
