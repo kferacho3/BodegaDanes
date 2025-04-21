@@ -20,15 +20,26 @@ export default function HeroSection() {
   useEffect(() => {
     const carousel = carouselRef.current;
     if (!carousel) return;
-    const itemWidth = carousel.clientWidth / 3;
 
     const id = setInterval(() => {
       setCurrentIndex((prev) => {
         const next = (prev + 1) % foodImages.length;
-        carousel.scrollTo({
-          left: itemWidth * next,
-          behavior: "smooth",
-        });
+        const isMobile = window.innerWidth < 640;
+
+        if (isMobile) {
+          const itemHeight = carousel.clientHeight / 3;
+          carousel.scrollTo({
+            top: itemHeight * next,
+            behavior: "smooth",
+          });
+        } else {
+          const itemWidth = carousel.clientWidth / 3;
+          carousel.scrollTo({
+            left: itemWidth * next,
+            behavior: "smooth",
+          });
+        }
+
         return next;
       });
     }, 4000);
@@ -58,36 +69,53 @@ export default function HeroSection() {
           <em>Chopped Cheese</em> and <em>Bacon Egg N&apos; Cheese</em> straight to
           your event — cooked on our signature griddle for that authentic sizzle.
         </p>
-        <div className="-mt-1 -mb-4 bg-[url('/textures/chalk-red.png')] bg-cover bg-center rounded-full w-14 h-14 flex items-center justify-center shadow-lg">
-  <Image
-    src="/logos/BodegaDanesHomeSymbol.png"
-    alt="Bodega Danes Symbol"
-    width={40}
-    height={40}
-    priority
-  />
-</div>
-
+        <div className="-mt-1 -mb-4 bg-[url('/textures/chalk-red.png')] bg-cover bg-center rounded-full w-20 h-20 flex items-center justify-center shadow-lg">
+          <Image
+            src="/logos/BodegaDanesHomeSymbol.png"
+            alt="Bodega Danes Symbol"
+            width={80}
+            height={80}
+            priority
+          />
+        </div>
       </div>
 
       {/* Carousel */}
-      <div className="relative z-10 w-[90vw] sm:w-[65vw] max-w-6xl mx-auto">
-        <div className="bg-[url('/textures/chalk-red.png')] bg-cover bg-center rounded-2xl p-4 shadow-xl overflow-hidden">
+      <div className="relative z-10 w-[97vw] sm:w-[85vw] max-w-6xl mx-auto">
+        {/* Changed h-[90vh] → h-[42vh] so only one image shows with peeks of prev/next on mobile */}
+        <div className="bg-[url('/textures/chalk-red.png')] bg-cover bg-center rounded-2xl p-4 shadow-xl overflow-hidden h-[80vh] sm:h-auto">
           <div
             ref={carouselRef}
-            className="flex gap-4 snap-x snap-mandatory overflow-x-hidden scroll-smooth"
+            className="
+              flex 
+              flex-col sm:flex-row 
+              gap-4 
+              snap-y sm:snap-x 
+              snap-mandatory 
+              overflow-hidden 
+              scroll-smooth 
+              h-full
+            "
           >
             {foodImages.map((src, i) => (
               <div
                 key={i}
-                className="relative -mb-5  flex-shrink-0 w-1/3 snap-center overflow-hidden rounded-xl"
+                className="
+                  relative 
+                  -mb-10  
+                  flex-shrink-0 
+                  w-full sm:w-1/3 
+                  snap-center 
+                  overflow-hidden 
+                  rounded-xl
+                "
               >
                 <Image
                   src={src}
                   alt={`Bodega Danes dish ${i + 1}`}
                   width={720}
                   height={480}
-                  className="object-cover w-full h-[45vh]"
+                  className="object-cover w-full h-[30vh] sm:h-[45vh]"
                   sizes="(max-width:768px) 90vw, 65vw"
                   priority={i < 2}
                 />
@@ -95,7 +123,7 @@ export default function HeroSection() {
             ))}
           </div>
         </div>
-        <div className="flex -mb-4  justify-center mt-3 space-x-2">
+        <div className="flex -mb-4 justify-center mt-3 space-x-2">
           {foodImages.map((_, dotIdx) => (
             <span
               key={dotIdx}
