@@ -36,7 +36,7 @@ const logos: string[] = [
 ];
 
 const SPEED_FACTOR = 0.25;
-const LOGO_SIZE = 50;    // px
+const LOGO_SIZE = 35;    // px
 const GAP_SIZE = 8;      // px (Tailwind gap-2)
 
 type ScrollingLogoBannerProps = {
