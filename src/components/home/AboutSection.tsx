@@ -26,7 +26,7 @@ export default function AboutSection() {
 
         {/* — Copy below on mobile — */}
         <article className="w-full md:w-1/2 space-y-6 text-charcoal dark:text-silver-light">
-          <h2 className="text-3xl md:text-4xl font-extrabold text-chalk-red">
+          <h2 className="text-3xl font-custom md:text-4xl font-extrabold text-chalk-red">
             Bringing NYC&nbsp;Bodega Flavor to&nbsp;You
           </h2>
           <p>

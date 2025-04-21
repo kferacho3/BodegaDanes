@@ -40,7 +40,7 @@ export default function ServicesPreview() {
       id="services"
       className="py-16 bg-gradient-to-b from-charcoal to-charcoal/90 text-silver-light"
     >
-      <div className="mx-auto max-w-6xl">
+      <div className="mx-auto font-custom max-w-6xl">
         <h2 className="text-3xl md:text-4xl font-extrabold mb-10 text-center">
           Our Signature Services
         </h2>

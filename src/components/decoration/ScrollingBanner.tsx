@@ -1,3 +1,5 @@
+// components/decoration/ScrollingBanner.tsx
+
 "use client";
 
 import {
@@ -10,8 +12,6 @@ import {
 import Image from "next/image";
 import { useEffect } from "react";
 
-// Absolute URLs for the 20 main logo assets sitting in your S3 bucket
-// (If you ever add / remove logos, just edit this list.)
 const logos: string[] = [
   "https://bodegadanes.s3.us-east-2.amazonaws.com/misc/logos/BodegaDanesMainLogo.webp",
   "https://bodegadanes.s3.us-east-2.amazonaws.com/misc/logos/BodegaDanesMainLogo2.webp",
@@ -35,44 +35,64 @@ const logos: string[] = [
   "https://bodegadanes.s3.us-east-2.amazonaws.com/misc/logos/BodegaDanesMainLogo20.webp",
 ];
 
-// Scale factor to convert scroll velocity to horizontal travel (tweak for feel)
 const SPEED_FACTOR = 0.25;
+const LOGO_SIZE = 50;    // px
+const GAP_SIZE = 8;      // px (Tailwind gap-2)
 
-export default function ScrollingLogoBanner() {
-  /**
-   * Scroll-driven motion:
-   * 1. Get current scroll position using useScroll.
-   * 2. Convert that to instantaneous velocity using useVelocity.
-   * 3. Smooth the velocity using useSpring.
-   * 4. Accumulate the motion into an x value.
-   */
+type ScrollingLogoBannerProps = {
+  backgroundTexture?:
+    | "chalk-black"
+    | "chalk-gold"
+    | "chalk-Menuboard"
+    | "chalk-Menuboard2"
+    | "chalk-pink"
+    | "chalk-red"
+    | "chalk-white";
+  direction?: "left" | "right";
+};
+
+export default function ScrollingLogoBanner({
+  backgroundTexture = "chalk-red",
+  direction = "left",
+}: ScrollingLogoBannerProps) {
   const { scrollY } = useScroll();
   const velocity = useVelocity(scrollY);
   const smoothVelocity = useSpring(velocity, { stiffness: 40, damping: 20 });
   const x = useMotionValue(0);
 
+  // On mount, if we're scrolling right, start shifted left by one segment
+  useEffect(() => {
+    if (direction === "right") {
+      const segmentWidth =
+        logos.length * LOGO_SIZE + (logos.length - 1) * GAP_SIZE;
+      x.set(-segmentWidth);
+    }
+  }, [direction, x]);
+
+  // Update x based on scroll velocity and direction
   useEffect(() => {
     const unsub = smoothVelocity.on("change", (v) => {
-      // Convert px/s to px per frame and apply factor; negate so scroll down moves logos left.
       const delta = (v / 60) * SPEED_FACTOR;
-      x.set(x.get() - delta);
+      x.set(x.get() + (direction === "left" ? -delta : delta));
     });
     return () => unsub();
-  }, [smoothVelocity, x]);
+  }, [smoothVelocity, x, direction]);
 
-  // Duplicate logos to create a seamless scrolling effect.
-  const repeated = [...logos, ...logos];
+  // Triple-repeat ensures there's always content to scroll into view
+  const repeated = [...logos, ...logos, ...logos];
 
   return (
-    <div className="relative w-full overflow-hidden bg-[url('/textures/chalk-red.png')] bg-repeat bg-center py-4 select-none">
+    <div
+      className={`relative w-full overflow-hidden bg-[url('/textures/${backgroundTexture}.png')] bg-repeat bg-center py-0 select-none`}
+    >
       <motion.div className="flex gap-2" style={{ x }}>
         {repeated.map((src, idx) => (
           <Image
             key={idx}
             src={src}
             alt="Bodega Danes logo"
-            width={100}
-            height={100}
+            width={LOGO_SIZE}
+            height={LOGO_SIZE}
             className="pointer-events-none shrink-0"
             unoptimized
           />
