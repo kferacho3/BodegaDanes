@@ -3,14 +3,16 @@ import { loginAction } from './actions';
 /** This page must run per-request so the “?err=1” flag is reactive */
 export const dynamic = 'force-dynamic';
 
-interface PageProps {
-  params: { adminPath: string };
-  searchParams?: { err?: string };
-}
-
-export default function LoginPage({ params, searchParams }: PageProps) {
-  const { adminPath } = params;
-  const err = searchParams?.err;
+export default async function LoginPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ adminPath: string }>;
+  searchParams: Promise<{ err?: string }>;
+}) {
+  /* 🔸  Resolve the Promises that Next passes in  */
+  const { adminPath } = await params;
+  const { err }       = await searchParams;
 
   return (
     <form
