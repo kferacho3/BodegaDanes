@@ -1,29 +1,22 @@
-// src/app/[adminPath]/login/page.tsx
+import { loginAction } from './actions';
 
-import { loginAction } from "./actions";
+/** This page must run per-request so the “?err=1” flag is reactive */
+export const dynamic = 'force-dynamic';
 
-export const dynamic = "force-static";
+interface PageProps {
+  params: { adminPath: string };
+  searchParams?: { err?: string };
+}
 
-export default async function LoginPage(
-  {
-    params,
-    searchParams,
-  }: {
-    // Next 15 now passes these as Promises
-    params: Promise<{ adminPath: string }>;
-    searchParams: Promise<{ err?: string }>;
-  }
-) {
-  // await them to get their actual values
-  const { adminPath } = await params;
-  const { err } = await searchParams;
+export default function LoginPage({ params, searchParams }: PageProps) {
+  const { adminPath } = params;
+  const err = searchParams?.err;
 
   return (
     <form
       action={loginAction}
       className="mx-auto mt-20 max-w-sm space-y-4 p-6 bg-charcoal/90 rounded-xl"
     >
-      {/* include the slug for your server action */}
       <input type="hidden" name="adminPath" value={adminPath} />
 
       <h1 className="text-center text-2xl font-header text-silver-light">
