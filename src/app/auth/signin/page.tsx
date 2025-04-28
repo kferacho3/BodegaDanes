@@ -57,7 +57,7 @@ export default function SignIn() {
         {/* ------------- inputs ------------- */}
         <Input
           type="email"
-          placeholder="email@bodegadanes.com"
+          placeholder="example@email.com"
           value={email}
           onChange={(v) => setEmail(v)}
         />

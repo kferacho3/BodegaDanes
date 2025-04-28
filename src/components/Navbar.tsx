@@ -1,6 +1,7 @@
 "use client";
 import { useFilter } from "@/context/FilterContext"; // adjust the path as needed
-import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/solid";
+import { Bars3Icon, UserCircleIcon, XMarkIcon } from "@heroicons/react/24/solid";
+
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -17,6 +18,8 @@ export default function Navbar() {
     { href: "/menu", label: "Menu" },
     { href: "/#contact", label: "Contact" },
     { href: "/book", label: "Book Service" },
+    { href:'/my-events', label:'My Events', icon:UserCircleIcon },
+
   ];
 
   return (
@@ -47,6 +50,8 @@ export default function Navbar() {
             ))}
             <ThemeToggle />
           </nav>
+          
+
           {/* Mobile burger */}
           <button
             className="md:hidden"

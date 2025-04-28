@@ -9,9 +9,9 @@ datasource db {
 }
 
 enum AvailabilityStatus {
-  OPEN     // blue
-  OFF      // grey
-  BOOKED   // red
+  OPEN // blue
+  OFF // grey
+  BOOKED // red
 }
 
 model Availability {
@@ -24,13 +24,15 @@ model Availability {
 }
 
 model Booking {
-  id         Int      @id @default(autoincrement())
-  date       DateTime
-  serviceId  String
-  customerId String?
-  stripeId   String?  @unique
-  meta       Json?                // ← THIS LINE must be present
-  createdAt  DateTime @default(now())
+  id               Int      @id @default(autoincrement())
+  date             DateTime
+  serviceId        String
+  confirmationCode String   @unique
+  customerId       String?             
+  customerEmail    String?               
+  stripeId         String?  @unique
+  meta             Json?
+  createdAt        DateTime @default(now())
 }
 
 model User {
