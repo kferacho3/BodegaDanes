@@ -1,19 +1,17 @@
-// prisma/schema.prisma
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider          = "postgresql"
-  url               = env("DATABASE_URL")
-  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  // shadowDatabaseUrl = env("SHADOW_DATABASE_URL")   // keep commented
 }
 
 enum AvailabilityStatus {
-  OPEN   // green
-  OFF    // gray
-  BOOKED // red
+  OPEN     // blue
+  OFF      // grey
+  BOOKED   // red
 }
 
 model Availability {
@@ -29,7 +27,19 @@ model Booking {
   id         Int      @id @default(autoincrement())
   date       DateTime
   serviceId  String
-  customerId String
-  stripeId   String   @unique
+  customerId String?
+  stripeId   String?  @unique
+  meta       Json?                // ← THIS LINE must be present
   createdAt  DateTime @default(now())
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String
+  firstName String?
+  lastName  String?
+  phone     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
