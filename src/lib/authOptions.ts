@@ -1,3 +1,5 @@
+// src/lib/authOptions.ts
+
 import type { DefaultSession, NextAuthOptions } from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
 
@@ -14,6 +16,7 @@ declare module 'next-auth' {
     };
   }
 }
+
 declare module 'next-auth/jwt' {
   interface JWT {
     id?: string;
@@ -48,10 +51,12 @@ export const authOptions: NextAuthOptions = {
       },
       async authorize(creds) {
         if (!creds?.email || !creds.password || !creds.key) return null;
+
         const isAdmin =
-          creds.email.toLowerCase() === (process.env.ADMIN_EMAIL   ?? '').toLowerCase()
-          && creds.password            === (process.env.ADMIN_PASSWORD?? '')
-          && creds.key                 === (process.env.ADMIN_PASSKEY ?? '');
+          creds.email.toLowerCase()   === (process.env.ADMIN_EMAIL   ?? '').toLowerCase() &&
+          creds.password              === (process.env.ADMIN_PASSWORD?? '')               &&
+          creds.key                   === (process.env.ADMIN_PASSKEY ?? '');
+
         return isAdmin
           ? { id: 'admin', name: 'Site Owner', email: creds.email, role: 'ADMIN' }
           : null;
