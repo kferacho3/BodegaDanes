@@ -3,38 +3,43 @@ import { prisma } from '@/lib/prisma'
 import { revalidatePath } from 'next/cache'
 import { notFound } from 'next/navigation'
 
-export default async function Page({
-  params,
-  searchParams,
-}: {
-  params: { code: string }
-  searchParams: { id?: string }
-}) {
-  const { code } = params
-  const identity = searchParams.id
-  if (!identity) notFound()
+/** 
+ * Next.js 15 now passes `params` and `searchParams` as Promises.
+ * We declare them as such, then `await` them inside the component. 
+ */
+interface Props {
+  params: Promise<{ code: string }>
+  searchParams: Promise<{ id?: string }>
+}
 
-  // 1️⃣ Fetch & guard
+export default async function Page({ params, searchParams }: Props) {
+  // 1️⃣ Resolve the incoming async params
+  const { code } = await params
+  const { id }   = await searchParams
+
+  if (!id) notFound()
+
+  // 2️⃣ Load & guard
   const booking = await prisma.booking.findFirst({
     where: {
       confirmationCode: code,
       OR: [
-        { customerEmail: identity },
-        { customerId:    identity },
+        { customerEmail: id },
+        { customerId:    id },
       ],
     },
   })
   if (!booking) notFound()
 
-  // 2️⃣ Pull out typed values from your JSON `meta`
+  // 3️⃣ Normalize JSON meta into typed locals
   const metaObj = (booking.meta ?? {}) as Record<string, unknown>
   const themeValue    = typeof metaObj.theme    === 'string' ? metaObj.theme    : ''
   const timeValue     = typeof metaObj.time     === 'string' ? metaObj.time     : ''
   const locationValue = typeof metaObj.location === 'string' ? metaObj.location : ''
-  const guestsValue   = typeof metaObj.guests   === 'number' ? metaObj.guests   : ''
+  const guestsValue   = typeof metaObj.guests   === 'number' ? metaObj.guests   : 0
   const notesValue    = typeof metaObj.notes    === 'string' ? metaObj.notes    : ''
 
-  // 3️⃣ Server Action: apply updates and revalidate
+  // 4️⃣ Server action to PATCH updates & revalidate
   async function updateBooking(formData: FormData) {
     'use server'
     const theme    = formData.get('theme')    as string
@@ -57,7 +62,7 @@ export default async function Page({
       },
     })
 
-    // invalidate the cache for this page so our new values show up
+    // re-render this page with fresh data
     revalidatePath(`/my-events/${code}`)
   }
 
@@ -65,7 +70,7 @@ export default async function Page({
     <main className="mx-auto max-w-lg py-12 space-y-6 text-silver-light">
       <h1 className="text-center font-header text-3xl">Your Event</h1>
 
-      {/* Read-only details */}
+      {/* Read‐only details */}
       <p><strong>Date:</strong>          {booking.date.toISOString().slice(0, 10)}</p>
       <p><strong>Service:</strong>       {booking.serviceId}</p>
       <p><strong>Confirmation #:</strong> {booking.confirmationCode}</p>
