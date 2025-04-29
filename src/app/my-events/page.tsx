@@ -1,17 +1,19 @@
 // src/app/my-events/page.tsx
 
-import { prisma } from '@/lib/prisma'
-import { redirect } from 'next/navigation'
+import { prisma } from '@/lib/prisma';
+import { redirect } from 'next/navigation';
 
 /**
- * Server Component: can be async, fetch data, call prisma, etc.
+ * Next.js 15 Server Component page:
+ * ‣ `searchParams` must be declared as a Promise of your params shape.
+ * ‣ We `await` it inside the async component.
  */
-export default async function Page({
-  searchParams,
-}: {
-  searchParams: { error?: string }
-}) {
-  const { error } = searchParams
+interface PageProps {
+  searchParams: Promise<{ error?: string }>;
+}
+
+export default async function Page({ searchParams }: PageProps) {
+  const { error } = await searchParams;
 
   return (
     <main className="mx-auto max-w-md py-12 space-y-8 text-silver-light">
@@ -23,23 +25,24 @@ export default async function Page({
         </p>
       )}
 
-      {/* Server-component form that posts to our server action */}
+      {/* Render the lookup form; it's a synchronous Server Component */}
       <EventLookupForm />
     </main>
-  )
+  );
 }
 
 /**
- * Regular (synchronous) Server Component that renders the form.
- * The actual server action is the nested `action` function below.
+ * Synchronous Server Component for the lookup form.
+ * Only the nested `action` is a `use server` function.
  */
 function EventLookupForm() {
   async function action(formData: FormData) {
-    'use server'  // ← only this function is a server action
+    'use server';
 
-    const identity = formData.get('identity') as string
-    const code     = formData.get('code')     as string
+    const identity = formData.get('identity') as string;
+    const code     = formData.get('code')     as string;
 
+    // Try to find the booking by email OR customerId
     const booking = await prisma.booking.findFirst({
       where: {
         confirmationCode: code,
@@ -48,15 +51,15 @@ function EventLookupForm() {
           { customerId:    identity },
         ],
       },
-    })
+    });
 
     if (!booking) {
       // Redirect back to lookup with error flag
-      redirect('/my-events?error=notfound')
+      return redirect('/my-events?error=notfound');
     }
 
-    // On success, go to the detail page
-    redirect(`/my-events/${code}?id=${encodeURIComponent(identity)}`)
+    // On success, navigate to the detail page
+    redirect(`/my-events/${code}?id=${encodeURIComponent(identity)}`);
   }
 
   return (
@@ -82,5 +85,5 @@ function EventLookupForm() {
         View event
       </button>
     </form>
-  )
+  );
 }
