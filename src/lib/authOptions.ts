@@ -2,6 +2,7 @@
 import { type DefaultSession, type NextAuthOptions } from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
 
+/* ── module augmentation ─────────────────────────────────────────── */
 declare module 'next-auth' {
   interface User { id: string; role: 'ADMIN' | 'USER' }
   interface Session extends DefaultSession {
@@ -12,6 +13,7 @@ declare module 'next-auth/jwt' {
   interface JWT { id?: string; role?: 'ADMIN' | 'USER' }
 }
 
+/* ── NextAuth options ───────────────────────────────────────────── */
 export const authOptions: NextAuthOptions = {
   providers: [
     Credentials({
@@ -21,17 +23,19 @@ export const authOptions: NextAuthOptions = {
         password: { label: 'Password', type: 'password' },
         key:      { label: 'Passkey',  type: 'text'     },
       },
-      async authorize(c) {
-        if (!c?.email || !c.password || !c.key) return null
-        const ok =
-          c.email.toLowerCase() === (process.env.ADMIN_EMAIL ?? '').toLowerCase() &&
-          c.password            === (process.env.ADMIN_PASSWORD ?? '') &&
-          c.key                 === (process.env.ADMIN_PASSKEY ?? '')
-        return ok ? { id: 'admin', name: 'Site Owner', email: c.email, role: 'ADMIN' } : null
+      async authorize(creds) {
+        if (!creds?.email || !creds.password || !creds.key) return null
+        const isAdmin =
+          creds.email.toLowerCase() === (process.env.ADMIN_EMAIL   ?? '').toLowerCase() &&
+          creds.password            === (process.env.ADMIN_PASSWORD?? '')               &&
+          creds.key                 === (process.env.ADMIN_PASSKEY ?? '')
+        return isAdmin
+          ? { id: 'admin', name: 'Site Owner', email: creds.email, role: 'ADMIN' }
+          : null
       },
     }),
   ],
-  session: { strategy: 'jwt', maxAge: 60 * 30 },
+  session: { strategy: 'jwt', maxAge: 60 * 30 /* 30 minutes */ },
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
@@ -47,5 +51,5 @@ export const authOptions: NextAuthOptions = {
     },
   },
   pages: { signIn: '/auth/signin' },
-  secret: process.env.NEXTAUTH_SECRET,
+  secret: process.env.NEXTAUTH_SECRET,      // ← needs to be set in prod
 }
