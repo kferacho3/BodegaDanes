@@ -1,6 +1,6 @@
 generator client {
   provider      = "prisma-client-js"
-  // Ensure Lambda compatibility on AWS Amplify (RHEL 1.0.x / OpenSSL 1.0.x)
+  // Include Lambda target so Prisma ships the rhel-openssl-1.0.x engine
   binaryTargets = ["native", "rhel-openssl-1.0.x"]
 }
 
@@ -11,9 +11,9 @@ datasource db {
 }
 
 enum AvailabilityStatus {
-  OPEN   // blue
-  OFF    // grey
-  BOOKED // red
+  OPEN    // blue
+  OFF     // grey
+  BOOKED  // red
 }
 
 model Availability {
