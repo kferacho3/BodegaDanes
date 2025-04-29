@@ -1,7 +1,7 @@
 // src/app/my-events/page.tsx
 
-import { prisma } from '@/lib/prisma';
-import { redirect } from 'next/navigation';
+import { prisma } from '@/lib/prisma'
+import { redirect } from 'next/navigation'
 
 /**
  * Server Component: can be async, fetch data, call prisma, etc.
@@ -9,9 +9,9 @@ import { redirect } from 'next/navigation';
 export default async function Page({
   searchParams,
 }: {
-  searchParams: { error?: string };
+  searchParams: { error?: string }
 }) {
-  const { error } = searchParams;
+  const { error } = searchParams
 
   return (
     <main className="mx-auto max-w-md py-12 space-y-8 text-silver-light">
@@ -23,22 +23,22 @@ export default async function Page({
         </p>
       )}
 
-      {/* Server Component form with a server action */}
+      {/* Server-component form that posts to our server action */}
       <EventLookupForm />
     </main>
-  );
+  )
 }
 
 /**
- * Server Component (not async) that renders the lookup form.
- * Uses a `use server` action to handle the submission.
+ * Regular (synchronous) Server Component that renders the form.
+ * The actual server action is the nested `action` function below.
  */
 function EventLookupForm() {
-  'use server';
-
   async function action(formData: FormData) {
-    const identity = formData.get('identity') as string;
-    const code     = formData.get('code')     as string;
+    'use server'  // ← only this function is a server action
+
+    const identity = formData.get('identity') as string
+    const code     = formData.get('code')     as string
 
     const booking = await prisma.booking.findFirst({
       where: {
@@ -48,15 +48,15 @@ function EventLookupForm() {
           { customerId:    identity },
         ],
       },
-    });
+    })
 
     if (!booking) {
-      // Redirect back with an error flag
-      redirect('/my-events?error=notfound');
+      // Redirect back to lookup with error flag
+      redirect('/my-events?error=notfound')
     }
 
-    // Navigate to the detail page
-    redirect(`/my-events/${code}?id=${encodeURIComponent(identity)}`);
+    // On success, go to the detail page
+    redirect(`/my-events/${code}?id=${encodeURIComponent(identity)}`)
   }
 
   return (
@@ -75,9 +75,12 @@ function EventLookupForm() {
         required
         className="w-full rounded bg-black/30 p-2 uppercase"
       />
-      <button className="w-full rounded-full bg-chalk-red py-2 text-white">
+      <button
+        type="submit"
+        className="w-full rounded-full bg-chalk-red py-2 text-white"
+      >
         View event
       </button>
     </form>
-  );
+  )
 }
