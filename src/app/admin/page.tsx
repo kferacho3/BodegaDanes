@@ -1,35 +1,38 @@
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
-import AvailabilityAdmin from '@/components/admin/AvailabilityAdmin';
-import { prisma } from '@/lib/prisma';
-import { format } from 'date-fns';
-import { getServerSession } from 'next-auth';
-import { redirect } from 'next/navigation';
+// src/app/admin/page.tsx
 
-import type { Service } from '@/app/book/bookingForm/BookingWizard'; // for casting
+import AvailabilityAdmin from '@/components/admin/AvailabilityAdmin'
+import { authOptions } from '@/lib/authOptions'; // ← pull from lib/authOptions, not from [...nextauth]/route
+import { prisma } from '@/lib/prisma'
+import { format } from 'date-fns'
+import { getServerSession } from 'next-auth'
+import { redirect } from 'next/navigation'
 
-export const dynamic = 'force-dynamic';
+import type { Service } from '@/app/book/bookingForm/BookingWizard'
+
+export const dynamic = 'force-dynamic'
 
 export default async function AdminPage() {
-  const session = await getServerSession(authOptions);
-  if (!session || session.user.role !== 'ADMIN') redirect('/auth/signin');
+  const session = await getServerSession(authOptions)
+  if (!session || session.user.role !== 'ADMIN') {
+    redirect('/auth/signin')
+  }
 
   /* ─ fetch ─ */
   const [rawRows, bookings] = await Promise.all([
     prisma.availability.findMany({
-      select : { date:true, status:true, services:true },
-      orderBy: { date:'asc' },
+      select : { date: true, status: true, services: true },
+      orderBy: { date: 'asc' },
     }),
-    prisma.booking.findMany({ orderBy:{ date:'asc' } }),
-  ]);
+    prisma.booking.findMany({ orderBy: { date: 'asc' } }),
+  ])
 
-  /* ─ normalise: Date → string, JsonValue → Service[] | undefined ─ */
+  /* ─ normalize for AvailabilityAdmin ─ */
   const rows = rawRows.map(r => ({
-    date    : r.date.toISOString().split('T')[0],      // string
+    date    : r.date.toISOString().substring(0, 10),
     status  : r.status,
     services: Array.isArray(r.services) ? (r.services as Service[]) : undefined,
-  }));
+  }))
 
-  /* ─ render ─ */
   return (
     <main className="mx-auto max-w-5xl space-y-10 p-6">
       <h1 className="font-header text-3xl">Bodega Danes Admin</h1>
@@ -61,5 +64,5 @@ export default async function AdminPage() {
         </div>
       </section>
     </main>
-  );
+  )
 }
