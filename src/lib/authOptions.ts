@@ -1,5 +1,4 @@
-// src/lib/authOptions.ts
-import { type DefaultSession, type NextAuthOptions } from 'next-auth';
+import type { DefaultSession, NextAuthOptions } from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
 
 /* ── module augmentation ─────────────────────────────────────────── */
@@ -15,7 +14,6 @@ declare module 'next-auth' {
     };
   }
 }
-
 declare module 'next-auth/jwt' {
   interface JWT {
     id?: string;
@@ -23,18 +21,20 @@ declare module 'next-auth/jwt' {
   }
 }
 
-/* ── pick up the NEXTAUTH_SECRET from either direct env or Amplify runtime secrets ───────────────────────────── */
-const runtimeSecret =
+/* ── pick up the NEXTAUTH_SECRET from either build-time env or Amplify runtime secrets ───────────────────────────── */
+const runtimeSecret: string | undefined =
   process.env.NEXTAUTH_SECRET
-    // Amplify injects a JSON blob into `process.env.secrets`
-    ?? (() => {
-      try {
-        const s = process.env.secrets ? JSON.parse(process.env.secrets) : {};
-        return typeof s.NEXTAUTH_SECRET === 'string' ? s.NEXTAUTH_SECRET : undefined;
-      } catch {
-        return undefined;
-      }
-    })();
+  // Amplify injects all Secrets as a JSON blob in process.env.secrets
+  ?? (() => {
+       try {
+         const blob = process.env.secrets ? JSON.parse(process.env.secrets) : {};
+         return typeof blob.NEXTAUTH_SECRET === 'string'
+           ? blob.NEXTAUTH_SECRET
+           : undefined;
+       } catch {
+         return undefined;
+       }
+     })();
 
 /* ── NextAuth configuration ───────────────────────────────────────────── */
 export const authOptions: NextAuthOptions = {
@@ -49,9 +49,9 @@ export const authOptions: NextAuthOptions = {
       async authorize(creds) {
         if (!creds?.email || !creds.password || !creds.key) return null;
         const isAdmin =
-          creds.email.toLowerCase() === (process.env.ADMIN_EMAIL   ?? '').toLowerCase() &&
-          creds.password            === (process.env.ADMIN_PASSWORD?? '')               &&
-          creds.key                 === (process.env.ADMIN_PASSKEY ?? '');
+          creds.email.toLowerCase() === (process.env.ADMIN_EMAIL   ?? '').toLowerCase()
+          && creds.password            === (process.env.ADMIN_PASSWORD?? '')
+          && creds.key                 === (process.env.ADMIN_PASSKEY ?? '');
         return isAdmin
           ? { id: 'admin', name: 'Site Owner', email: creds.email, role: 'ADMIN' }
           : null;
@@ -83,5 +83,6 @@ export const authOptions: NextAuthOptions = {
     signIn: '/auth/signin',
   },
 
+  // ✅ ensure NEXTAUTH_SECRET is always defined in production
   secret: runtimeSecret,
 };

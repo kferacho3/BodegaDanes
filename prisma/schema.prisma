@@ -1,16 +1,18 @@
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
+  // Ensure Lambda compatibility on AWS Amplify (RHEL 1.0.x / OpenSSL 1.0.x)
+  binaryTargets = ["native", "rhel-openssl-1.0.x"]
 }
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
-  // shadowDatabaseUrl = env("SHADOW_DATABASE_URL")   // keep commented
+  // shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
 }
 
 enum AvailabilityStatus {
-  OPEN // blue
-  OFF // grey
+  OPEN   // blue
+  OFF    // grey
   BOOKED // red
 }
 
@@ -28,8 +30,8 @@ model Booking {
   date             DateTime
   serviceId        String
   confirmationCode String   @unique
-  customerId       String?             
-  customerEmail    String?               
+  customerId       String?
+  customerEmail    String?
   stripeId         String?  @unique
   meta             Json?
   createdAt        DateTime @default(now())
