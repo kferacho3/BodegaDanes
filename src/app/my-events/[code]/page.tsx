@@ -7,26 +7,26 @@ export default async function Page({
   params,
   searchParams,
 }: {
-  params:       { code: string }
+  params: { code: string }
   searchParams: { id?: string }
 }) {
   const { code } = params
-  const id = searchParams.id
-  if (!id) notFound()
+  const identity = searchParams.id
+  if (!identity) notFound()
 
-  // 1️⃣ Fetch and guard
+  // 1️⃣ Fetch & guard
   const booking = await prisma.booking.findFirst({
     where: {
       confirmationCode: code,
       OR: [
-        { customerEmail: id },
-        { customerId:    id },
+        { customerEmail: identity },
+        { customerId:    identity },
       ],
     },
   })
   if (!booking) notFound()
 
-  // 2️⃣ Normalize meta JSON into a Record and extract typed locals
+  // 2️⃣ Pull out typed values from your JSON `meta`
   const metaObj = (booking.meta ?? {}) as Record<string, unknown>
   const themeValue    = typeof metaObj.theme    === 'string' ? metaObj.theme    : ''
   const timeValue     = typeof metaObj.time     === 'string' ? metaObj.time     : ''
@@ -34,7 +34,7 @@ export default async function Page({
   const guestsValue   = typeof metaObj.guests   === 'number' ? metaObj.guests   : ''
   const notesValue    = typeof metaObj.notes    === 'string' ? metaObj.notes    : ''
 
-  // 3️⃣ Server Action for PATCH
+  // 3️⃣ Server Action: apply updates and revalidate
   async function updateBooking(formData: FormData) {
     'use server'
     const theme    = formData.get('theme')    as string
@@ -43,7 +43,6 @@ export default async function Page({
     const guests   = Number(formData.get('guests'))
     const notes    = formData.get('notes')    as string
 
-    // Merge old meta with new values
     await prisma.booking.update({
       where: { confirmationCode: code },
       data: {
@@ -57,7 +56,8 @@ export default async function Page({
         },
       },
     })
-    // Re-render this route with fresh data
+
+    // invalidate the cache for this page so our new values show up
     revalidatePath(`/my-events/${code}`)
   }
 
