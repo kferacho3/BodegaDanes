@@ -68,7 +68,7 @@ export default async function Page({ params, searchParams }: Props) {
 
   return (
     <main className="mx-auto max-w-lg py-12 space-y-6 text-silver-light">
-      <h1 className="text-center font-header text-3xl">Your Event</h1>
+      <h1 className="text-center font-header text-3xl">Your Events</h1>
 
       {/* Read‐only details */}
       <p><strong>Date:</strong>          {booking.date.toISOString().slice(0, 10)}</p>
