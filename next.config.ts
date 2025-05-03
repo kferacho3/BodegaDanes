@@ -10,6 +10,7 @@ module.exports = {
     ADMIN_PASSKEY:   process.env.ADMIN_PASSKEY,
     DATABASE_URL:    process.env.DATABASE_URL,         // ← added
     SHADOW_DATABASE_URL: process.env.SHADOW_DATABASE_URL, // ← added
+    STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY,
   },
   images: {
     remotePatterns: [
