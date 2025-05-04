@@ -1,26 +1,17 @@
 import EventDetails from '@/components/admin/EventDetails';
 import { prisma } from '@/lib/prisma';
 import { notFound } from 'next/navigation';
+import { ReactElement } from 'react';
 
-// --- local type for the route params ---------------------------------------
-interface RouteParams {
-  id: string;
-}
+export const dynamic = 'force-dynamic';
 
-/**
- * Dynamic event‑detail page
- * ────────────────────────
- *  • `params.id` always arrives as a string from Next.js.
- *  • Cast to `number` **only** if your Prisma `booking.id` column is an `Int`.
- *    Otherwise use the raw string.
- */
-export default async function EventDetailPage({
+export default async function Page({
   params,
 }: {
-  params: RouteParams;
-}) {
+  params: { id: string };
+}): Promise<ReactElement> {
   const booking = await prisma.booking.findUnique({
-    where: { id: Number(params.id) }, // ← change to `params.id` if the column is a string
+    where: { id: Number(params.id) }, // ← or use params.id directly if your ID column is a string
   });
 
   if (!booking) {
