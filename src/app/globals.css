@@ -66,3 +66,25 @@
     background-repeat: no-repeat;
   }
 }
+
+/* =======================================================================
+   FULLCALENDAR ─ full‑cell colour blocks & smaller, centred calendar
+   ======================================================================= */
+   .fc           { @apply font-[BodegaChalk] text-silver-light mx-auto max-w-[36rem]; }
+   .fc .fc-daygrid-day-frame { position: relative; }
+   
+   /* day‑cell base look */
+   .fc .fc-daygrid-day {
+     @apply cursor-pointer rounded-md transition duration-200 ease-out hover:scale-[1.03];
+   }
+   
+   /* title & buttons */
+   .fc .fc-toolbar.fc-header-toolbar { @apply mb-1 text-silver-light; }
+   .fc .fc-button {
+     @apply bg-avail-open hover:brightness-110 rounded-full border-0 px-3 py-1
+            font-[BodegaChalk] text-silver-light;
+   }
+   
+   /* remove legacy 80 % block styles (now using display:background) */
+   .bdgevent      { display:none !important; }
+   
