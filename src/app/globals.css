@@ -88,3 +88,51 @@
    /* remove legacy 80 % block styles (now using display:background) */
    .bdgevent      { display:none !important; }
    
+
+   /* Add to globals.css */
+@keyframes bounce-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes progress-bar {
+  0% {
+    width: 0%;
+  }
+  100% {
+    width: 100%;
+  }
+}
+
+@keyframes float-slow {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(30px, -30px) scale(1.05);
+  }
+  66% {
+    transform: translate(-20px, 20px) scale(0.95);
+  }
+}
+
+.animate-bounce-in {
+  animation: bounce-in 0.5s ease-out;
+}
+
+.animate-progress-bar {
+  animation: progress-bar 3s linear;
+}
+
+.animate-float-slow {
+  animation: float-slow 20s ease-in-out infinite;
+}
